@@ -1885,23 +1885,27 @@ function wireHeroSelectPicker(select){
     });
     menu.appendChild(item);
   });
-  const onOutside=event=>{if(!wrapper.contains(event.target))close(false);};
+  let skipNextOutside=false;
+  const onOutside=event=>{if(skipNextOutside||wrapper.contains(event.target))return;close(false);};
   function close(restoreFocus){
     if(menu.hidden)return;
-    menu.hidden=true;trigger.setAttribute('aria-expanded','false');document.removeEventListener('pointerup',onOutside,true);
+    menu.hidden=true;trigger.setAttribute('aria-expanded','false');document.removeEventListener('pointerdown',onOutside,true);
     if(restoreFocus)trigger.focus({preventScroll:true});
   }
   function open(){
     document.querySelectorAll('.hero-select-menu:not([hidden])').forEach(other=>{if(other!==menu)other.closest('.hero-select')?.dispatchEvent(new Event('hero-select-close'));});
     menu.hidden=false;trigger.setAttribute('aria-expanded','true');
+    skipNextOutside=true;
+    document.addEventListener('pointerdown',onOutside,true);
     requestAnimationFrame(()=>{
-      document.addEventListener('pointerup',onOutside,true);
+      skipNextOutside=false;
       const target=menu.querySelector('[aria-selected="true"]:not(:disabled)')||menu.querySelector('[role="option"]:not(:disabled)');target?.focus({preventScroll:true});
     });
   }
   wrapper.addEventListener('hero-select-close',()=>close(false));
+  wrapper.addEventListener('focusout',event=>{if(!wrapper.contains(event.relatedTarget))close(false);});
   trigger.addEventListener('mousedown',event=>{if(event.button!==0)return;event.preventDefault();});
-  trigger.addEventListener('click',()=>{menu.hidden?open():close(false);});
+  trigger.addEventListener('click',()=>{menu.hidden?open():close(true);});
   trigger.addEventListener('keydown',event=>{if(['ArrowDown','ArrowUp','Enter',' '].includes(event.key)){event.preventDefault();if(menu.hidden)open();}});
   select.classList.add('hero-native-select');select.tabIndex=-1;select.setAttribute('aria-hidden','true');
   select.parentNode.insertBefore(wrapper,select);wrapper.append(select,trigger,menu);
