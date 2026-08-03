@@ -1853,8 +1853,8 @@ function captureHeroViewport(hero){
 }
 function restoreHeroViewport(snapshot){
   if(!snapshot)return;
-  const restore=()=>{const shell=workspace.querySelector('.player-shell');if(shell)shell.scrollTop=snapshot.scrollTop;};
-  requestAnimationFrame(()=>{restore();requestAnimationFrame(restore);});
+  const shell=workspace.querySelector('.player-shell');
+  if(shell)shell.scrollTop=snapshot.scrollTop;
 }
 let HERO_SELECT_UID=0;
 function wireHeroSelectPicker(select){
@@ -1885,8 +1885,7 @@ function wireHeroSelectPicker(select){
     });
     menu.appendChild(item);
   });
-  let skipNextOutside=false;
-  const onOutside=event=>{if(skipNextOutside||wrapper.contains(event.target))return;close(false);};
+  const onOutside=event=>{if(!wrapper.contains(event.target))close(false);};
   function close(restoreFocus){
     if(menu.hidden)return;
     menu.hidden=true;trigger.setAttribute('aria-expanded','false');document.removeEventListener('pointerdown',onOutside,true);
@@ -1894,18 +1893,13 @@ function wireHeroSelectPicker(select){
   }
   function open(){
     document.querySelectorAll('.hero-select-menu:not([hidden])').forEach(other=>{if(other!==menu)other.closest('.hero-select')?.dispatchEvent(new Event('hero-select-close'));});
-    menu.hidden=false;trigger.setAttribute('aria-expanded','true');
-    skipNextOutside=true;
-    document.addEventListener('pointerdown',onOutside,true);
-    requestAnimationFrame(()=>{
-      skipNextOutside=false;
-      const target=menu.querySelector('[aria-selected="true"]:not(:disabled)')||menu.querySelector('[role="option"]:not(:disabled)');target?.focus({preventScroll:true});
-    });
+    menu.hidden=false;trigger.setAttribute('aria-expanded','true');document.addEventListener('pointerdown',onOutside,true);
+    requestAnimationFrame(()=>{const target=menu.querySelector('[aria-selected="true"]:not(:disabled)')||menu.querySelector('[role="option"]:not(:disabled)');target?.focus({preventScroll:true});});
   }
   wrapper.addEventListener('hero-select-close',()=>close(false));
-  wrapper.addEventListener('focusout',event=>{if(!wrapper.contains(event.relatedTarget))close(false);});
-  trigger.addEventListener('mousedown',event=>{if(event.button!==0)return;event.preventDefault();});
-  trigger.addEventListener('click',()=>{menu.hidden?open():close(true);});
+  let mouseToggled=false;
+  trigger.addEventListener('mousedown',event=>{if(event.button!==0)return;event.preventDefault();mouseToggled=true;menu.hidden?open():close(false);});
+  trigger.addEventListener('click',event=>{event.preventDefault();if(mouseToggled){mouseToggled=false;return;}menu.hidden?open():close(false);});
   trigger.addEventListener('keydown',event=>{if(['ArrowDown','ArrowUp','Enter',' '].includes(event.key)){event.preventDefault();if(menu.hidden)open();}});
   select.classList.add('hero-native-select');select.tabIndex=-1;select.setAttribute('aria-hidden','true');
   select.parentNode.insertBefore(wrapper,select);wrapper.append(select,trigger,menu);
