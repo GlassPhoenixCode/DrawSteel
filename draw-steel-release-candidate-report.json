@@ -1,0 +1,42 @@
+{
+  "schema": "draw-steel-release-candidate-report-v1",
+  "generatedAt": "2026-08-02T22:42:00.000Z",
+  "appVersion": "14.0.0",
+  "contentVersion": "2026.08.02-r1",
+  "contentSha256": "b15d4ecb7027254f5e0c6a2950f8c130d3e770162c61534911eef41eb3198369",
+  "records": 6693,
+  "staticValidation": {
+    "passed": true,
+    "checks": 36,
+    "failures": 0
+  },
+  "browserValidation": {
+    "passed": true,
+    "tests": 41,
+    "failures": 0,
+    "startingAbilitiesExercised": 122,
+    "classSubclassFixtures": 26,
+    "levelTwoThroughTenPaths": 81,
+    "ancestries": 12,
+    "kits": 21,
+    "complications": 100
+  },
+  "accessibility": {
+    "passed": true,
+    "checks": [
+      "document-language",
+      "main-landmark",
+      "keyboard-skip-link",
+      "unique-element-ids",
+      "named-buttons",
+      "mobile-viewport"
+    ]
+  },
+  "workspaceIsolation": {
+    "passed": true,
+    "heroCountBefore": 0,
+    "heroCountAfter": 0,
+    "temporaryStorageFixtureRemoved": true
+  },
+  "result": "release-candidate-pass"
+}
