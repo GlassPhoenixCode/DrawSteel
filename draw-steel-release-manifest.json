@@ -5,7 +5,7 @@
   "contentSha256": "b15d4ecb7027254f5e0c6a2950f8c130d3e770162c61534911eef41eb3198369",
   "recordCount": 6693,
   "builtAt": "2026-08-02T00:00:00.000Z",
-  "entrypoint": "draw-steel-compendium-phase12.html",
+  "entrypoint": "index.html",
   "modules": [
     "draw-steel-vendor.js",
     "draw-steel-styles.css",
